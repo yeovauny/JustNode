@@ -1,0 +1,9 @@
+Node JS.
+
+for install express-generator(this is for create node applications with the routers file)
+
+ - sudo  npm install -g express-generator@4.16.0
+
+for generate a new project with express generator , you need to put this sentences
+
+ - express <applicationName>
