@@ -7,3 +7,31 @@ for install express-generator(this is for create node applications with the rout
 for generate a new project with express generator , you need to put this sentences
 
  - express <applicationName>
+
+
+There is a commando for set a MongoDB where to specify save the data, that works with the MongoDB
+Was installed on your computer
+
+Mongod --dbpath=path --bind_ip 127.0.0.1
+
+MongoDB commands:
+
+Commands to show all databases
+show dbs
+
+Examples with dishes
+db.dishes. --> create this,
+Db.dishes.insert({"name":"nameValue","description":"This is a test"}) --> create a new row
+Db.dishes.find() --> this function search all the informations saved on db.dishes.
+
+For get the timestamp who works mondoDB, We only do this sentences.
+
+1.- var id= new ObjectId();
+2.- id.getTimestamp();
+
+
+Install mondoDB drivers
+npm install mongodb@3.0.10 --save   
+
+
+
