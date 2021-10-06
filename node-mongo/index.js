@@ -3,46 +3,46 @@ const assert = require('assert');
 const dboper = require('./operations');
 
 
-const usuario = 'courseranodeexample'
-const password = 'xzqhhw4tWwxmwRki'
+const usuario = 'usuario'
+const password = 'password'
 
 const url = `mongodb+srv://${usuario}:${password}@cluster0.sy1vg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const dbname = 'myFirstDatabase';
 
-MongoClient.connect(url, (err,client) =>{
+MongoClient.connect(url).then((client) =>{
 
-    assert.equal(err,null);
-
+    
     console.log('Connected correctly to server');
     const db = client.db(dbname);
     
    
 
    
-    dboper.insertDocument(db,{name:"Eduardo", description:"Testing third"}, 'dishes',(result) =>{
-      
-      console.log('Was Insert Document'+result.ops);
+    dboper.insertDocument(db,{name:"Eduardo", description:"Testing third"}
+    , 'dishes').then((result) =>{
+        console.log('Was Insert Document'+result.ops);
 
-      dboper.findDocuments(db,'dishes',(docs)=>{
-          console.log(`Found Documents ${docs}`)
+        return dboper.findDocuments(db,'dishes');
+    })
+    .then((docs) =>{
+        console.log(`Found Documents ${docs}`);
+        return dboper.updateDocument(db,{name:'Eduardo'},{description:"Updated Testing"},'dishes');
+    })
+    .then((result) =>{
+        console.log(`Updated document ${result.result}`);
+        return dboper.findDocuments(db,'dishes');
+    })
+    .then((docs)=>{
+        console.log("Found Updated Documents:\n", docs);
+        return db.dropCollection("dishes");
+    })
+    .then((result)=>{
+        console.log(`Dropped Collection ${result}`);
+         return client.close();
 
-          dboper.updateDocument(db,{name:'Eduardo'},{description:"Updated Testing"},'dishes',(result) =>{
-
-            console.log(`Updated document ${result.result}`);
-            dboper.findDocuments(db,'dishes',(docs)=>{
-                console.log(`Found Documents ${docs}`)
-
-                
-                db.dropCollection("dishes", (result) => {
-                    console.log("Dropped Collection: ", result);
-
-                    client.close();
-                });
-
-            });
-          })
-      });
-
-    });
+    })
+    .catch((err) => console.log(err));
+   
        
-});
+})
+.catch((err) => console.log(err));
