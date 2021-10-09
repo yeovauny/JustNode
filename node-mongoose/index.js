@@ -18,11 +18,26 @@ connect.then((db)=>{
     .then((dish)=>{
         console.log(`Saving the ${dish}`);
 
-       return Dishes.find({}).exec();
+       return Dishes.findByIdAndUpdate(dish._id,{
+            $set: {description: 'Updated test'}
+       },{
+            new: true
+       }).exec();
 
     })
     .then((dishes) =>{
-        console.log(`Deleting ${dishes}`);
+        console.log(` ${dishes}`);
+
+        dish.comments.push({
+            rating: 5,
+            comment: 'this is a commentss',
+            author: 'Leonardo'
+        });
+
+        return dish.save();
+
+    }).then(()=>{
+        console.log(`is was deleted ${dishes}`);
 
         return Dishes.remove({}).exe();
     })
