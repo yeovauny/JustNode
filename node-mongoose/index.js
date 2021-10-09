@@ -5,17 +5,16 @@ const usuario = 'courseranodeexample';
 const password = 'AKl3VcE9CySwSmmt';
 const url = `mongodb+srv://${usuario}:${password}@cluster0.sy1vg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 
-const connect = mongoose.connect(url);
+// was added {autoIndex: false} por configuracion de librerias
+const connect = mongoose.connect(url, {autoIndex: false});
 
 connect.then((db)=>{
     console.log('Connected correctly to server');
 
-    var newDish = Dishes({
+    Dishes.create({
         name: 'Uthappizza',
         description: 'test'
-    });
-
-    newDish.save()
+    })
     .then((dish)=>{
         console.log(`Saving the ${dish}`);
 
@@ -25,7 +24,7 @@ connect.then((db)=>{
     .then((dishes) =>{
         console.log(`Deleting ${dishes}`);
 
-        return Dishes.remove({});
+        return Dishes.remove({}).exe();
     })
     .then(() =>{
         console.log(`Clossing the connection with the database`);
