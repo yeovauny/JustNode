@@ -12,6 +12,22 @@ var leaderRouter = require('./routes/leaderRouter');
 var promotionRouter = require('./routes/promotionRouter');
 
 
+const mongoose = require('mongoose');
+const Dishes = require('./models/dishes');
+
+const usuario = 'courseranodeexample';
+const password = 'TCGAYgfhPGAwS3rG';
+const url = `mongodb+srv://${usuario}:${password}@cluster0.sy1vg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
+
+
+const connect = mongoose.connect(url);
+
+connect.then((db) => {
+  console.log("Connected correctly to server");
+}, (err) => { console.log(err); });
+
+
+
 var app = express();
 
 // view engine setup
