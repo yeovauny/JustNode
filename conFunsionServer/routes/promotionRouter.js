@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require ('body-parser');
-
+const mongoose = require('mongoose');
+const Promotions = require('../models/promotions');
 
 const promotionRouter = express.Router();
 
@@ -10,23 +11,40 @@ promotionRouter.use(bodyParser.json());
 promotionRouter.route('/')
 /**end points without params */
 .get((req,res,next) =>{
-    res.end("Sending all promotions to you!");
+    Promotions.find({})
+    .then((promotion) => {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(promotion);
+    }, (err) => next(err))
+    .catch((err) => next(err));
 
 })
 
 .post((req,res,next) =>{
-    res.statusCode = 200;
-    res.end(`will add the promotions ${req.body.name} with details ${req.body.description}`);
+    Promotions.create(req.body)
+    .then((promotion) => {
+        console.log('Dish Created ', promotion);
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(promotion);
+    }, (err) => next(err))
+    .catch((err) => next(err));
 })
 
 .put((req,res,next) =>{
-    res.statusCode = 200;
-    res.end(`Will update the promotions ${req.body.name} with  details ${req.body.description}`)
+    res.statusCode = 403;
+    res.end('PUT operation not supported on /promotions');
 })
 
 .delete((req,res,next) =>{
-    res.statusCode = 200;
-    res.end(`Was deleted all the promotions`);
+    Promotions.remove({})
+    .then((resp) => {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(resp);
+    }, (err) => next(err))
+    .catch((err) => next(err));  
 })
 /**
  * endpoints with params
@@ -35,20 +53,37 @@ promotionRouter.route('/')
 
 var apiRoutes = {
     getParamsPromotionRouter : function(req, res, next){
-        console.log(`/promotion/:id with id ${req.params.id}`);
-        res.end("GET endpoint with params  "+req.params.id)
+        Promotions.findById(req.params.id)
+        .then((promotios) => {
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.json(promotios);
+        }, (err) => next(err))
+        .catch((err) => next(err));
     },
     postParamsPromotionRouter : function(req, res, next){
-        console.log(`/promotion/:id with id ${req.params.id}`);
-        res.end(`POST endpoint with params  ${req.params.id} with body name ${req.body.name} and  details ${req.body.description}`)
+        res.statusCode = 403;
+       res.end('POST operation not supported on /promotios/'+ req.params.id);
     },
     putParamsPromotionRouter : function(req, res, next){
-        console.log(`/promotion/:id with id ${req.params.id}`);
-        res.end(`PUT endpoint with params  ${req.params.id} with body name ${req.body.name} and  details ${req.body.description}`)
+        Promotions.findByIdAndUpdate(req.params.id, {
+            $set: req.body
+        }, { new: true })
+        .then((promotion) => {
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.json(promotion);
+        }, (err) => next(err))
+        .catch((err) => next(err));
     },
     deleteParamsPromotionRouter : function(req, res, next){
-        console.log(`/promotion/:id with id ${req.params.id}`);
-        res.end("DELETE endpoint. Was deleted the promotion with id  "+req.params.id)
+        Promotions.findByIdAndRemove(req.params.id)
+    .then((resp) => {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(resp);
+    }, (err) => next(err))
+    .catch((err) => next(err));
     }
     
 }
