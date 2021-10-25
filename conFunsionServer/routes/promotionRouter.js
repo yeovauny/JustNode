@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require ('body-parser');
 const mongoose = require('mongoose');
 const Promotions = require('../models/promotions');
-
+const authenticate = require('../authenticate');
 const promotionRouter = express.Router();
 
 promotionRouter.use(bodyParser.json());
@@ -21,7 +21,7 @@ promotionRouter.route('/')
 
 })
 
-.post((req,res,next) =>{
+.post(authenticate.verifyUser ,(req,res,next) =>{
     Promotions.create(req.body)
     .then((promotion) => {
         console.log('Dish Created ', promotion);
@@ -32,12 +32,12 @@ promotionRouter.route('/')
     .catch((err) => next(err));
 })
 
-.put((req,res,next) =>{
+.put(authenticate.verifyUser ,(req,res,next) =>{
     res.statusCode = 403;
     res.end('PUT operation not supported on /promotions');
 })
 
-.delete((req,res,next) =>{
+.delete(authenticate.verifyUser ,(req,res,next) =>{
     Promotions.remove({})
     .then((resp) => {
         res.statusCode = 200;

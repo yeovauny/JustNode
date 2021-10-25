@@ -7,6 +7,7 @@ var session = require('express-session');
 var FileStore = require('session-file-store')(session);
 var passport = require('passport');
 var authenticate = require('./authenticate');
+var config = require('./config');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -18,9 +19,7 @@ var promotionRouter = require('./routes/promotionRouter');
 const mongoose = require('mongoose');
 const Dishes = require('./models/dishes');
 
-const usuario = 'courseranodeexample';
-const password = 'TCGAYgfhPGAwS3rG';
-const url = `mongodb+srv://${usuario}:${password}@cluster0.sy1vg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
+const url = config.mongoUrl;
 
 
 const connect = mongoose.connect(url);
@@ -44,17 +43,9 @@ app.use(express.urlencoded({ extended: false }));
 /** comment the cookies parser because We want to use authentication by session */
 //app.use(cookieParser('12345-67890-09876-54321'));
 
-app.use(session({
-  name: 'session-id',
-  secret: '12345-67890-09876-54321',
-  saveUninitialized: false,
-  resave: false,
-  store: new FileStore()
-}));
+
 
 app.use(passport.initialize());
-app.use(passport.session());
-
 
 /** We moved all autentication urls before of autentication function for loging before 
  *  to get information on other resources
@@ -62,22 +53,6 @@ app.use(passport.session());
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-
-function auth (req, res, next) {
-  console.log(req.user);
-
-  if (!req.user) {
-    var err = new Error('You are not authenticated!');
-    err.status = 403;
-    next(err);
-  }
-  else {
-        next();
-  }
-}
-
-// autentication
-app.use(auth);
 
 //-----
 

@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require ('body-parser');
 const mongoose =require('mongoose');
 const Leader = require('../models/leaders');
+const authenticate = require('../authenticate');
 
 const leaderRouter = express.Router();
 
@@ -21,7 +22,7 @@ leaderRouter.route('/')
 
 })
 
-.post((req,res,next) =>{
+.post(authenticate.verifyUser ,(req,res,next) =>{
     Leader.create(req.body)
     .then((leader) => {
         console.log('Leader was Created ', leader);
@@ -33,12 +34,12 @@ leaderRouter.route('/')
     
 })
 
-.put((req,res,next) =>{
+.put(authenticate.verifyUser ,(req,res,next) =>{
   res.statusCode = 403;
   res.end(`Put operations not supported on /leaders`);
 })
 
-.delete((req,res,next) =>{
+.delete(authenticate.verifyUser ,(req,res,next) =>{
     Leader.remove({})
     .then((resp) => {
         res.statusCode = 200;
@@ -51,7 +52,8 @@ leaderRouter.route('/')
  * End points with params on the URLS
  */
 var apiRoutes = {
-    getParamsLeaderRouter : function(req, res, next){
+    getParamsLeaderRouter :  authenticate.verifyUser , function(req, res, next){
+        console.log("entra a esta secccion despues de autenticarse");
         Leader.findById(req.params.id)
         .then((leader) => {
             res.statusCode = 200;
